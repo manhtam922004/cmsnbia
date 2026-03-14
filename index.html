@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc mừng sinh nhật Bia!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            overflow: hidden;
+        }
+
+        /* Chuyển đổi giữa các màn hình */
+        .screen {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .active { display: flex !important; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hiệu ứng kính mờ (Glassmorphism) cho thẻ hiển thị */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Tùy chỉnh nút bấm trắc nghiệm */
+        .btn-custom {
+            margin: 10px;
+            width: 80%;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover { transform: scale(1.05); }
+
+        /* Màn hình quà tặng cuối cùng */
+        #gift-screen {
+            background: url('roses-white-flowers.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Lớp phủ mờ để chữ nổi bật trên nền hoa */
+        #gift-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 1;
+        }
+
+        .gift-content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            animation: popUp 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        #timer { font-family: monospace; font-size: 3rem; }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="a.mp3" loop></audio>
+
+    <div id="countdown-screen" class="screen active">
+        <div class="glass-card">
+            <h1 class="mb-4 text-primary fw-bold">Chưa đến giờ mở quà đâu!</h1>
+            <p class="fs-5 text-secondary">Hộp quà sẽ tự động mở vào đúng 00:00 ngày 16/03/2026.</p>
+            <div id="timer" class="fw-bold text-danger mt-4">Đang tính toán...</div>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="glass-card">
+            <h2 class="mb-3 text-success fw-bold">Đã đến giờ mở quà! 🎉</h2>
+            <p class="fs-5 mb-4">Nhưng để nhận quà, hãy vượt qua câu hỏi bảo mật này:</p>
+            
+            <h3 class="mb-4 text-dark fw-bold">Bia lên men từ:</h3>
+            
+            <div id="error-msg" class="alert alert-danger d-none" role="alert">
+                Sai rồi, thử lại xem nào! 😜
+            </div>
+
+            <div class="d-flex flex-column align-items-center">
+                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('A')">A. Sữa chua</button>
+                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('B')">B. Nấm</button>
+                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('C')">C. Pịa</button>
+                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('D')">D. Dấm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gift-screen" class="screen">
+        <div class="gift-content">
+            <h1 class="display-1 fw-bold mb-4 text-warning">Happy Birthday BIA! 🎂</h1>
+            <p class="display-6">Anh biết em là cô gái giỏi và mạnh mẽ, chẳng cần anh nuôi. Nhưng anh chỉ muốn nói với em là: Nếu có chuyện gì thì luôn có anh nghe em trình bày cả đêm (chỉ nghe), cứu đơn giúp em, em buồn thì an rồi ủi em, xoa lưng cho em!</p>
+			<p class="display-6">P.S: Không làm lốp trưởng! Năm nào anh cũng chỉ cần gửi link này để CMSN thôi nhỉ :))))</p>
+        </div>
+    </div>
+
+    <script>
+        // Thiết lập mốc thời gian: 00:00 ngày 16/03/2026 (Múi giờ GMT+7)
+        // Chuỗi ISO 8601 có offset +07:00 đảm bảo độ chính xác bất kể máy tính đang dùng múi giờ nào
+        const targetDate = new Date("2026-03-16T00:00:00+07:00").getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            // Nếu đã qua mốc thời gian
+            if (distance <= 0) {
+                // Ẩn đếm ngược
+                document.getElementById('countdown-screen').classList.remove('active');
+                
+                // Chỉ hiện câu đố nếu quà chưa được mở
+                if (!document.getElementById('gift-screen').classList.contains('active')) {
+                    document.getElementById('quiz-screen').classList.add('active');
+                }
+                return;
+            }
+
+            // Tính toán ngày, giờ, phút, giây
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Cập nhật giao diện
+            document.getElementById('timer').innerHTML = 
+                `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+        }
+
+        // Chạy hàm updateTimer mỗi 1 giây
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Gọi ngay lần đầu để không bị delay 1s
+
+        // Xử lý logic câu đố
+        function checkAnswer(answer) {
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (answer === 'B') { // B. Nấm là đáp án đúng
+                // Chuyển màn hình
+                document.getElementById('quiz-screen').classList.remove('active');
+                document.getElementById('gift-screen').classList.add('active');
+                
+                // Phát nhạc
+                const audio = document.getElementById('bg-music');
+                audio.play().catch(error => {
+                    console.log("Trình duyệt chặn autoplay âm thanh. Người dùng cần tương tác thêm.");
+                });
+            } else {
+                // Hiển thị thông báo sai
+                errorMsg.classList.remove('d-none');
+                // Tự động ẩn thông báo sau 2 giây
+                setTimeout(() => {
+                    errorMsg.classList.add('d-none');
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
