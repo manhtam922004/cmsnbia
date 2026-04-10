@@ -3,289 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chúc mừng sinh nhật Bia!</title>
+    <title>Gửi Bia...</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;1,400&family=Quicksand:wght@400;500;600&family=Sacramento&display=swap" rel="stylesheet">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            overflow: hidden;
+        :root {
+            --primary-romantic: #d1b1c6; /* Hồng tím oải hương nhạt */
+            --secondary-romantic: #fff8f1; /* Kem ấm */
+            --text-romantic: #5d4037; /* Nâu sẫm ấm áp */
+            --accent-romantic: #ffb7b2; /* Hồng đào */
         }
 
-        /* Chuyển đổi giữa các màn hình */
-        .screen {
-            display: none;
+        body {
+            /* Hình nền gradient lãng mạn nhẹ nhàng */
+            background: linear-gradient(135deg, #fcece3, #e3e9fc); 
             height: 100vh;
-            flex-direction: column;
-            justify-content: center;
+            display: flex;
             align-items: center;
-            text-align: center;
-            padding: 20px;
-            animation: fadeIn 1s ease-in-out;
+            justify-content: center;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Ngăn scroll bar */
         }
 
-        .active { display: flex !important; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Hiệu ứng kính mờ (Glassmorphism) cho thẻ hiển thị */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 20px;
+        /* Style cho form nhập ngày sinh */
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
             width: 100%;
+            max-width: 420px;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        
+        .login-box h5 {
+            color: #888;
+            font-size: 1.15rem;
+            font-weight: 500;
         }
 
-        /* Tùy chỉnh nút bấm trắc nghiệm */
-        .btn-custom {
-            margin: 10px;
-            width: 80%;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
+        /* Style cho ô nhập */
+        #dobInput {
+            border-radius: 20px;
+            padding-left: 20px;
+            background-color: transparent;
+            border-color: #ddd;
         }
-        .btn-custom:hover { transform: scale(1.05); }
+        #dobInput:focus {
+            box-shadow: none;
+            border-color: var(--primary-romantic);
+        }
 
-        /* Màn hình quà tặng cuối cùng */
-        #gift-screen {
-            background: url('roses-white-flowers.jpg') no-repeat center center;
-            background-size: cover;
+        /* Style cho nút Mở Thư */
+        #submitBtn {
+            border-radius: 20px;
+            background-color: var(--primary-romantic);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition: background-color 0.3s ease;
+        }
+        #submitBtn:hover {
+            background-color: #c0a1b6;
+        }
+
+        /* Style cho bức thư */
+        .letter-box {
+            display: none; /* Ẩn đi lúc đầu */
+            background: var(--secondary-romantic);
+            padding: 60px;
+            border-radius: 25px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 750px;
+            border: 1px dashed var(--accent-romantic); /* Đường viền chấm nhỏ lãng mạn */
             position: relative;
-        }
-
-        /* Lớp phủ mờ để chữ nổi bật trên nền hoa */
-        #gift-screen::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); 
+            animation: fadeInLetter 1.2s ease-out;
+            line-height: 2.1;
+            color: var(--text-romantic);
+            overflow: hidden; /* Để chứa các trang trí tuyệt đối */
             z-index: 1;
         }
 
-        .gift-content {
+        /* Trang trí hoa mờ ở góc trên bên phải */
+        .letter-box::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 180px;
+            height: 180px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23fce6d8"><path d="M50 0C36.1 0 24.8 11.3 24.8 25.2C24.8 32.7 28.1 39.4 33.3 44C21.7 47.9 13.5 58.7 13.5 71.3C13.5 87 26.5 100 42.1 100C45.3 100 48.4 99.4 51.3 98.3C54.2 99.4 57.3 100 60.5 100C76.1 100 89.1 87 89.1 71.3C89.1 58.7 80.9 47.9 69.3 44C74.5 39.4 77.8 32.7 77.8 25.2C77.8 11.3 66.5 0 52.6 0C51.7 0 50.9 0 50 0ZM50 13.2C56.6 13.2 61.9 18.5 61.9 25.2C61.9 28.5 60.5 31.4 58.3 33.5C56.1 35.6 53.2 37 50 37C46.8 37 43.9 35.6 41.7 33.5C39.5 31.4 38.1 28.5 38.1 25.2C38.1 18.5 43.4 13.2 50 13.2ZM42.1 61.9C45.3 61.9 48.4 62.5 51.3 63.6C54.2 62.5 57.3 61.9 60.5 61.9C68.9 61.9 75.9 66.1 79.7 72.4C77.4 81.3 69.6 88 60.5 88C57.3 88 54.2 87.4 51.3 86.3C48.4 87.4 45.3 88 42.1 88C33 88 25.2 81.3 22.9 72.4C26.7 66.1 33.7 61.9 42.1 61.9Z"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        /* Trang trí trái tim mờ ở góc dưới bên trái */
+        .letter-box::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 120px;
+            height: 120px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23ffb7b2"><path d="M50 85.1l-6.8-6.1C18.6 57.7 2 42.5 2 24.3 2 9.5 13.5 0 28.3 0c8.3 0 16.3 3.9 21.7 10 5.4-6.1 13.4-10 21.7-10C86.5 0 98 9.5 98 24.3c0 18.2-16.6 33.4-41.2 54.7L50 85.1z"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.12;
+            z-index: -1;
+        }
+
+        @keyframes fadeInLetter {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tiêu đề "Chào Bia!" */
+        .letter-header {
+            font-family: 'Sacramento', cursive;
+            font-size: 3.2rem;
+            color: var(--primary-romantic);
+            margin-bottom: 30px;
+        }
+
+        /* Phần nội dung chính của bức thư */
+        .letter-body {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 35px;
+            text-align: justify;
+        }
+        .letter-body p {
+            margin-bottom: 1.6rem;
+        }
+
+        /* Chữ ký "Chào bro!" */
+        .letter-footer {
+            font-family: 'Sacramento', cursive;
+            font-size: 2.2rem;
+            color: var(--text-romantic);
+            text-align: right;
+            margin-top: 45px;
             position: relative;
-            z-index: 2;
-            color: #fff;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-            animation: popUp 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transition: opacity 0.5s ease;
         }
-
-        @keyframes popUp {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        #timer { font-family: monospace; font-size: 3rem; }
-
-        /* --- CSS CHO TÍNH NĂNG ẨN --- */
-        #secret-trigger {
-            cursor: pointer;
-            display: inline-block;
-            transition: transform 0.1s;
-        }
-        
-        #secret-trigger:active {
-            transform: scale(0.9);
-        }
-
-        /* Mưa trái tim */
-        .falling-heart {
-            position: fixed;
-            top: -10%;
-            z-index: 10000;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
-
-        /* Ảnh ẩn lecuoi.jpg */
-        #hidden-lecuoi {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            max-width: 90vw;
-            max-height: 80vh;
-            z-index: 11000;
-            border: 5px solid #fff;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            border-radius: 10px;
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        #hidden-lecuoi.show {
+        .letter-footer::after {
+            content: '';
             display: block;
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
+            width: 100px;
+            height: 1px;
+            background-color: #dcb0b0;
+            position: absolute;
+            right: 0;
+            bottom: -5px;
+        }
+
+        /* Style cho thông báo lỗi */
+        #errorMsg {
+            font-size: 0.85em;
+            margin-top: 12px;
+            color: #d9534f;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" src="a.mp3" loop></audio>
-
-    <div id="countdown-screen" class="screen active">
-        <div class="glass-card">
-            <h1 class="mb-4 text-primary fw-bold">Chưa đến giờ mở quà đâu!</h1>
-            <p class="fs-5 text-secondary">Hộp quà sẽ tự động mở vào đúng 00:00 ngày 16/03/2026.</p>
-            <div id="timer" class="fw-bold text-danger mt-4">Đang tính toán...</div>
-        </div>
-    </div>
-
-    <div id="quiz-screen" class="screen">
-        <div class="glass-card">
-            <h2 class="mb-3 text-success fw-bold">Đã đến giờ mở quà! 🎉</h2>
-            <p class="fs-5 mb-4">Nhưng để nhận quà, hãy vượt qua câu hỏi bảo mật này:</p>
-            
-            <h3 class="mb-4 text-dark fw-bold">Bia lên men từ:</h3>
-            
-            <div id="error-msg" class="alert alert-danger d-none" role="alert">
-                Sai rồi, thử lại xem nào! 😜
+    <div class="container d-flex justify-content-center">
+        
+        <div class="login-box" id="loginSection">
+            <h5 class="mb-4">Nhập ngày sinh của Bia và</p>*MỞ LOA NHÉ*</p></h5>
+            <div class="input-group mb-3">
+                <input type="number" id="dobInput" class="form-control" placeholder="Nhập một con số..." aria-label="Ngày sinh">
+                <button class="btn" type="button" id="submitBtn">Mở Thư</button>
             </div>
-
-            <div class="d-flex flex-column align-items-center">
-                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('A')">A. Sữa chua</button>
-                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('B')">B. Nấm</button>
-                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('C')">C. Pịa</button>
-                <button class="btn btn-outline-primary btn-custom" onclick="checkAnswer('D')">D. Dấm</button>
+            <div id="errorMsg" style="display: none;">
+                Sai rồi, thử lại số khác nhé!
             </div>
         </div>
-    </div>
 
-    <div id="gift-screen" class="screen">
-        <div class="gift-content p-3">
-            <h1 class="display-1 fw-bold mb-4 text-warning">Happy Birthday <span id="secret-trigger" title="Nhấn thử xem?">BIA!</span> 🎂</h1>
-            <p class="display-6">Anh biết em là cô gái giỏi và mạnh mẽ, chẳng cần anh nuôi. Nhưng anh chỉ muốn nói với em là: Nếu có chuyện gì thì luôn có anh nghe em trình bày cả đêm (chỉ nghe), cứu đơn giúp em, em buồn thì an rồi ủi em, xoa lưng cho em!</p>
-            <p class="display-6">P.S: Không làm lốp trưởng! Năm nào anh cũng chỉ cần gửi link này để CMSN thôi nhỉ :))))</p>
+        <div class="letter-box" id="letterSection">
+            <div class="letter-header">Chào Bia!</div>
+            <div class="letter-body">
+                <p>Bia còn nhớ website này à? Bia có ổn không? Có hạnh phúc không? Còn khóc nhè 1 mình không?</p>
+                <p>Anh vẫn thế, vẫn cố gắng là một người mạnh mẽ, làm Ebay thật tốt, vẫn cố gắng vì sự nghiệp để một ngày nào đó Bia sẽ ... À mà thôi.</p>
+                <p>Nhớ là anh vẫn ở đây, nghe si tình ói ẻ =)). Mà do anh chọn, không phải do em nên đừng nghĩ nhé!</p>
+            </div>
+            <div class="letter-footer">Chào bro!</div>
         </div>
+
     </div>
 
-    <img id="hidden-lecuoi" src="lecuoi.jpg" alt="Kỷ niệm đặc biệt">
+    <audio id="bgMusic" src="roiemse.mp3" preload="auto"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Thiết lập mốc thời gian: 00:00 ngày 16/03/2026
-        const targetDate = new Date("2026-02-16T00:00:00+07:00").getTime();
+        document.addEventListener("DOMContentLoaded", function() {
+            const submitBtn = document.getElementById('submitBtn');
+            const dobInput = document.getElementById('dobInput');
+            const loginSection = document.getElementById('loginSection');
+            const letterSection = document.getElementById('letterSection');
+            const errorMsg = document.getElementById('errorMsg');
+            const bgMusic = document.getElementById('bgMusic');
 
-        function updateTimer() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance <= 0) {
-                document.getElementById('countdown-screen').classList.remove('active');
+            // Hàm kiểm tra và xử lý
+            function checkDOB() {
+                const val = dobInput.value.trim();
                 
-                if (!document.getElementById('gift-screen').classList.contains('active')) {
-                    document.getElementById('quiz-screen').classList.add('active');
+                if (val === '16') {
+                    // Nếu đúng, ẩn khung nhập với hiệu ứng làm mờ và di chuyển
+                    loginSection.style.opacity = '0';
+                    loginSection.style.transform = 'translateY(-20px)';
+                    
+                    // Đợi hiệu ứng ẩn hoàn tất
+                    setTimeout(() => {
+                        loginSection.style.display = 'none';
+                        letterSection.style.display = 'block';
+                    }, 600); 
+                    
+                    // Phát nhạc (nếu trình duyệt cho phép sau tương tác người dùng)
+                    bgMusic.play().catch(function(error) {
+                        console.log("Không thể tự động phát nhạc: ", error);
+                    });
+                } else {
+                    // Nếu sai, hiện thông báo lỗi
+                    errorMsg.style.display = 'block';
+                    dobInput.value = ''; // Xóa trắng input
+                    dobInput.focus();
                 }
-                return;
             }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Lắng nghe sự kiện click nút
+            submitBtn.addEventListener('click', checkDOB);
 
-            document.getElementById('timer').innerHTML = 
-                `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
-        }
-
-        setInterval(updateTimer, 1000);
-        updateTimer(); 
-
-        function checkAnswer(answer) {
-            const errorMsg = document.getElementById('error-msg');
-            
-            if (answer === 'B') { 
-                document.getElementById('quiz-screen').classList.remove('active');
-                document.getElementById('gift-screen').classList.add('active');
-                
-                const audio = document.getElementById('bg-music');
-                audio.play().catch(error => {
-                    console.log("Trình duyệt chặn autoplay âm thanh. Người dùng cần tương tác thêm.");
-                });
-            } else {
-                errorMsg.classList.remove('d-none');
-                setTimeout(() => {
-                    errorMsg.classList.add('d-none');
-                }, 2000);
-            }
-        }
-
-        /* --- SCRIPT CHO TÍNH NĂNG ẨN --- */
-        let clickCount = 0;
-        let secretFound = false;
-
-        document.getElementById('secret-trigger').addEventListener('click', function() {
-            if(secretFound) return; // Chỉ cho phép mở 1 lần
-            clickCount++;
-            
-            // Nếu click đủ 5 lần thì gọi hàm hiển thị ảnh và mưa tim
-            if (clickCount === 5) {
-                secretFound = true;
-                triggerEasterEgg();
-            }
-        });
-
-        function triggerEasterEgg() {
-            // Làm mờ nội dung chữ phía sau để làm nổi bật ảnh
-            document.querySelector('.gift-content').style.opacity = '0.2';
-
-            // Hiển thị bức ảnh lecuoi.jpg
-            const lecuoiPhoto = document.getElementById('hidden-lecuoi');
-            lecuoiPhoto.style.display = 'block';
-            // Cần một độ trễ nhỏ để animation scale hoạt động mượt mà
-            setTimeout(() => {
-                lecuoiPhoto.classList.add('show');
-            }, 50);
-
-            // Tạo cơn mưa trái tim
-            const heartEmojis = ['💖', '💝', '💕', '💗', '❤️', '💘'];
-            for (let i = 0; i < 80; i++) {
-                setTimeout(() => createFallingItem(heartEmojis), i * 70);
-            }
-            
-            // Tùy chọn: Nhấp vào ảnh để đóng lại
-            lecuoiPhoto.addEventListener('click', function() {
-                lecuoiPhoto.classList.remove('show');
-                setTimeout(() => {
-                    lecuoiPhoto.style.display = 'none';
-                    document.querySelector('.gift-content').style.opacity = '1';
-                }, 500);
+            // Lắng nghe sự kiện nhấn phím Enter
+            dobInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkDOB();
+                }
             });
-        }
-
-        function createFallingItem(emojis) {
-            const item = document.createElement('div');
-            item.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-            item.className = 'falling-heart';
-            
-            // Random vị trí, kích thước và tốc độ rơi
-            item.style.left = Math.random() * 100 + 'vw';
-            item.style.fontSize = (Math.random() * 20 + 20) + 'px';
-            item.style.animationDuration = (Math.random() * 4 + 2) + 's';
-            
-            document.body.appendChild(item);
-            
-            // Xóa element sau khi rơi xong để tối ưu hiệu suất
-            setTimeout(() => {
-                item.remove();
-            }, 6000);
-        }
+        });
     </script>
 </body>
 </html>
