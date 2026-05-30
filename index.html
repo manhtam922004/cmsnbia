@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Truy Tìm Kho Báu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Quicksand', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body { 
+            background-color: #0f172a; 
+            color: #fff; 
+            height: 100vh; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        #darkness {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; 
+            z-index: 10;
+            pointer-events: none; /* Để bấm xuyên qua bóng tối */
+            transition: opacity 0.5s ease;
+        }
+
+        #hint {
+            position: fixed; top: 12%; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.9); font-size: 1.1rem; z-index: 20;
+            pointer-events: none; text-align: center; width: 90%;
+            font-weight: 700; text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            transition: opacity 0.3s;
+        }
+
+        #treasure {
+            position: absolute;
+            font-size: 4rem; 
+            z-index: 5; 
+            cursor: pointer;
+            transition: top 0.7s ease-in-out, left 0.7s ease-in-out, transform 0.3s ease;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+            transform: translate(-50%, -50%);
+        }
+
+        /* Giao diện Thẻ xác nhận (Modal) */
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); /* Nền mờ */
+            z-index: 50; 
+            display: none; /* Ẩn mặc định */
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+
+        .modal-card {
+            background: #ffffff; 
+            padding: 35px 25px; 
+            border-radius: 24px;
+            text-align: center; 
+            width: 85%; max-width: 340px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.8); 
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-card h2 {
+            color: #1e293b;
+            font-size: 1.4rem;
+            margin: 15px 0 25px 0;
+        }
+
+        #ok-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white; border: none; padding: 14px;
+            border-radius: 50px; font-size: 1.2rem; font-weight: bold; 
+            width: 100%; cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #ok-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.6);
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="hint">Kho báu đang trôi lơ lửng ở đâu đó...<br>Hãy tìm và ấn vào kho báu để mở!</div>
+    
+    <div id="darkness"></div>
+
+    <div id="treasure">🎁</div>
+
+    <div id="modal-overlay">
+        <div class="modal-card">
+            <div style="font-size: 4rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">💎</div>
+            <h2>Giữ kho báu này không?</h2>
+            <button id="ok-btn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const darkness = document.getElementById('darkness');
+        const treasure = document.getElementById('treasure');
+        const hint = document.getElementById('hint');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalCard = document.querySelector('.modal-card');
+        let isFound = false;
+
+        // --- Logic Đèn Pin ---
+        function updateFlashlight(x, y) {
+            if (isFound) return;
+            darkness.style.background = `radial-gradient(circle at ${x}px ${y}px, transparent 0%, rgba(0,0,0,0.6) 70px, rgba(0,0,0,0.95) 140px, black 180px)`;
+        }
+
+        updateFlashlight(window.innerWidth / 2, -500);
+
+        window.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            updateFlashlight(touch.clientX, touch.clientY);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            updateFlashlight(e.clientX, e.clientY);
+        });
+
+        // --- Logic Kho Báu Trôi Lơ Lửng ---
+        function moveTreasure() {
+            if (isFound) return;
+            
+            const maxX = window.innerWidth;
+            const maxY = window.innerHeight;
+            
+            const randomX = Math.max(50, Math.floor(Math.random() * (maxX - 50)));
+            const randomY = Math.max(100, Math.floor(Math.random() * (maxY - 100)));
+
+            treasure.style.left = `${randomX}px`;
+            treasure.style.top = `${randomY}px`;
+        }
+
+        moveTreasure();
+        setInterval(moveTreasure, 900);
+
+        // --- Logic Khi Bấm Trúng Kho Báu ---
+        function openTreasure() {
+            if (isFound) return;
+            isFound = true;
+            
+            // Xóa bóng tối và ẩn các thành phần cũ
+            darkness.style.opacity = '0';
+            hint.style.opacity = '0';
+            treasure.style.display = 'none'; // Ẩn icon hộp quà đang bay
+            
+            // Hiện bảng xác nhận (Modal)
+            modalOverlay.style.display = 'flex';
+            setTimeout(() => {
+                modalOverlay.style.opacity = '1';
+                modalCard.style.transform = 'scale(1)'; // Hiệu ứng nảy lên
+            }, 50);
+        }
+
+        treasure.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            openTreasure();
+        });
+        
+        treasure.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            openTreasure();
+        });
+
+        // --- Logic Nút OK ---
+        document.getElementById('ok-btn').addEventListener('click', () => {
+            window.location.href = 'https://zalo.me/0583701111';
+        });
+    </script>
+</body>
+</html>
